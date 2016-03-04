@@ -30,8 +30,7 @@ class MobienceDelayPlugin(MuninPlugin):
                 critical=str(critical)))]
 
     def execute(self):
-        path = os.environ.get('LOG_URI', "/home/vagrant/log/mobience")
-        #print("{}".format(os.environ))
+        path = os.environ.get('LOG_URI', "/home/vagrant/log/mobience_log")
         if os.path.exists(path):
             with open(path, 'r') as f:
                 lines = []
@@ -51,7 +50,7 @@ class MobienceDelayPlugin(MuninPlugin):
         start = t_log
         now = datetime.now()
         offset = now - start
-        delay = int(offset.total_seconds()/60)
+        delay = int(offset.total_seconds()/60)  # minute
         return dict(delay=delay)
 
 if __name__ == "__main__":
