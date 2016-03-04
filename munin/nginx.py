@@ -2,13 +2,12 @@
 
 import os
 import re
-import urllib
+import urllib.request
 from munin import MuninPlugin
 
 
 class MuninNginxPlugin(MuninPlugin):
     category = "Nginx"
-
     status_re = re.compile(
         r"Active connections:\s+(?P<active>\d+)\s+"
         r"server accepts handled requests\s+"
@@ -17,10 +16,11 @@ class MuninNginxPlugin(MuninPlugin):
 
     def __init__(self):
         super(MuninNginxPlugin, self).__init__()
-        self.url = os.environ.get('NX_STATUS_URL') or "http://localhost/nginx_status"
+        self.url = os.environ.get('NX_STATUS_URL', "http://192.168.100.31/nginx_status")
 
     def autoconf(self):
         return bool(self.get_status())
 
     def get_status(self):
-        return self.status_re.search(urllib.urlopen(self.url).read()).groupdict()
+        return self.status_re.search(urllib.request.urlopen(self.url.strip()).read().decode("utf-8")).groupdict()
+
