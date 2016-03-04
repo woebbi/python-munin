@@ -13,9 +13,14 @@ Requirements
 Installation (ubuntu)
 ------------
 
-**Install plugins**
+**Install Python-Munin**
 
 * git clone https://github.com/madmanteam/python-munin.git /tmp/python-munin
+* cd /tmp/python-munin
+* sudo python setup.py install
+
+**Install plugins**
+
 * sudo cp /tmp/python-munin/mobience_delay /usr/share/munin/plugins
 * sudo ln -sf /usr/share/munin/plugins/mobience_delay /etc/munin/plugins/mobience_delay
 * sudo chmod +x /usr/share/munin/plugins/mobience_delay
