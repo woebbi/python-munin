@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+"""
+Mobience's importer delay plugin for Munin.
+"""
+
+import os
+from datetime import datetime
+from munin import MuninPlugin
+import re
+
+
+class MobienceDelayPlugin(MuninPlugin):
+    title = "Mobience Importer"
+    args = "--base 1000 -l 0"
+    vlabel = "delay"
+    scale = False
+    category = "mobience"
+
+    @property
+    def fields(self):
+        warning = os.environ.get('delay_warn', 10)
+        critical = os.environ.get('delay_crit', 120)
+        return [("delay", dict(
+                label="delay",
+                info='The delay of the mobience\'s delay describes how many processes are in the run-queue (scheduled to run "immediately").',
+                type="GAUGE",
+                min="0",
+                warning=str(warning),
+                critical=str(critical)))]
+
+    def execute(self):
+        path = os.environ.get('LOG_URI', "/home/vagrant/log/mobience")
+        #print("{}".format(os.environ))
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                lines = []
+                for line in f:
+                    if "At:" in line and " LD:" in line:
+                        lines.append(line)
+                size = len(lines)
+                line = lines[size-1]
+                s = re.search("At: ", line)
+                temp = line[s.end():]
+                e = re.search(" LD:", temp)
+                time_str = temp[:e.start()]
+                t_log = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S+00:00")
+        else:
+            print("Not found log")
+            return dict(delay=0)
+        start = t_log
+        now = datetime.now()
+        offset = now - start
+        delay = int(offset.total_seconds()/60)
+        return dict(delay=delay)
+
+if __name__ == "__main__":
+    MobienceDelayPlugin().run()
