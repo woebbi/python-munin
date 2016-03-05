@@ -1,6 +1,6 @@
 
 import os, sys, re
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from munin import MuninPlugin
 
 

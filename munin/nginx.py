@@ -16,7 +16,7 @@ class MuninNginxPlugin(MuninPlugin):
 
     def __init__(self):
         super(MuninNginxPlugin, self).__init__()
-        self.url = os.environ.get('NX_STATUS_URL', "http://192.168.100.31/nginx_status")
+        self.url = os.environ.get('NX_STATUS_URL', "http://127.0.0.1/nginx_status")
 
     def autoconf(self):
         return bool(self.get_status())
