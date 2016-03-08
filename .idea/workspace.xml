@@ -31,70 +31,7 @@
     <favorites_list name="python-munin" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="mysql.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/munin/mysql.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.37982833">
-              <caret line="24" column="20" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
-              <folding>
-                <element signature="e#1#19#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mysql_dbrows_" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plugins/mysql_dbrows_">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-              <folding>
-                <marker date="1457410918000" expanded="true" signature="136:815" placeholder="..." />
-                <marker date="1457410918000" expanded="true" signature="518:815" placeholder="..." />
-                <marker date="1457410918000" expanded="true" signature="565:642" placeholder="SELECT sum(t... TABLES" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mysql_connections" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plugins/mysql_connections">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
-              <folding>
-                <marker date="1457411974000" expanded="true" signature="960:1456" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mysql_dbsize_" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plugins/mysql_dbsize_">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="33" column="19" selection-start-line="33" selection-start-column="19" selection-end-line="33" selection-end-column="19" />
-              <folding>
-                <marker date="1457412106000" expanded="true" signature="750:847" placeholder="SELECT sum(d... TABLES" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mysql_replication" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plugins/mysql_replication">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="79" column="31" selection-start-line="79" selection-start-column="31" selection-end-line="79" selection-end-column="31" />
-              <folding>
-                <element signature="e#114#123#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -121,17 +58,17 @@
         <option value="$PROJECT_DIR$/munin/postgres.py" />
         <option value="$PROJECT_DIR$/munin/redis.py" />
         <option value="$PROJECT_DIR$/munin/riak.py" />
-        <option value="$PROJECT_DIR$/plugins/mobience_delay" />
         <option value="$PROJECT_DIR$/README.rst" />
-        <option value="$PROJECT_DIR$/plugins/nginx_requests" />
         <option value="$PROJECT_DIR$/munin/__init__.py" />
-        <option value="$PROJECT_DIR$/plugins/nginx_connections" />
         <option value="$PROJECT_DIR$/munin/nginx.py" />
-        <option value="$PROJECT_DIR$/plugins/mysql_dbrows_" />
+        <option value="$PROJECT_DIR$/plugins/mobience_delay" />
+        <option value="$PROJECT_DIR$/plugins/nginx_requests" />
+        <option value="$PROJECT_DIR$/plugins/nginx_connections" />
         <option value="$PROJECT_DIR$/plugins/mysql_connections" />
-        <option value="$PROJECT_DIR$/munin/mysql.py" />
-        <option value="$PROJECT_DIR$/plugins/mysql_dbsize_" />
+        <option value="$PROJECT_DIR$/plugins/mysql_dbrows_" />
         <option value="$PROJECT_DIR$/plugins/mysql_replication" />
+        <option value="$PROJECT_DIR$/plugins/mysql_dbsize_" />
+        <option value="$PROJECT_DIR$/munin/mysql.py" />
       </list>
     </option>
   </component>
@@ -204,6 +141,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="python-munin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="python-munin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="python-munin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plugins" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -594,7 +545,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
           <folding>
-            <element signature="e#77#86#0" expanded="false" />
+            <element signature="e#82#91#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -604,9 +555,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1457410918000" expanded="true" signature="136:815" placeholder="..." />
-            <marker date="1457410918000" expanded="true" signature="518:815" placeholder="..." />
-            <marker date="1457410918000" expanded="true" signature="565:642" placeholder="SELECT sum(t... TABLES" />
+            <marker date="1457421379000" expanded="true" signature="562:639" placeholder="SELECT sum(t... TABLES" />
           </folding>
         </state>
       </provider>
@@ -616,7 +565,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
-            <marker date="1457412106000" expanded="true" signature="750:847" placeholder="SELECT sum(d... TABLES" />
+            <marker date="1457421408000" expanded="true" signature="747:844" placeholder="SELECT sum(d... TABLES" />
           </folding>
         </state>
       </provider>
@@ -626,7 +575,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
-            <element signature="e#114#123#0" expanded="true" />
+            <element signature="e#111#120#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -677,9 +626,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
-          <folding>
-            <marker date="1457411974000" expanded="true" signature="960:1456" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -688,7 +635,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="74" />
           <folding>
-            <element signature="e#77#86#0" expanded="false" />
+            <element signature="e#82#91#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -698,9 +645,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1457410918000" expanded="true" signature="136:815" placeholder="..." />
-            <marker date="1457410918000" expanded="true" signature="518:815" placeholder="..." />
-            <marker date="1457410918000" expanded="true" signature="565:642" placeholder="SELECT sum(t... TABLES" />
+            <marker date="1457421379000" expanded="true" signature="562:639" placeholder="SELECT sum(t... TABLES" />
           </folding>
         </state>
       </provider>
@@ -710,7 +655,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
-            <marker date="1457412106000" expanded="true" signature="750:847" placeholder="SELECT sum(d... TABLES" />
+            <marker date="1457421408000" expanded="true" signature="747:844" placeholder="SELECT sum(d... TABLES" />
           </folding>
         </state>
       </provider>
@@ -720,7 +665,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
-            <element signature="e#114#123#0" expanded="true" />
+            <element signature="e#111#120#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -766,7 +711,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#77#86#0" expanded="false" />
+            <element signature="e#82#91#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -864,42 +809,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/nginx_requests">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2961918">
-          <caret line="14" column="25" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/mobience_delay">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.87306064">
-          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding>
-            <element signature="e#77#86#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/nginx_connections">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6346968">
-          <caret line="30" column="25" selection-start-line="30" selection-start-column="25" selection-end-line="30" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/munin/nginx.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.10578279">
-          <caret line="5" column="29" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="29" />
-          <folding>
-            <element signature="e#23#32#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.10578279">
@@ -940,55 +849,83 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/mysql_dbsize_">
+    <entry file="file://$PROJECT_DIR$/plugins/mobience_delay">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="33" column="19" selection-start-line="33" selection-start-column="19" selection-end-line="33" selection-end-column="19" />
-          <folding>
-            <marker date="1457412106000" expanded="true" signature="750:847" placeholder="SELECT sum(d... TABLES" />
-          </folding>
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/mysql_replication">
+    <entry file="file://$PROJECT_DIR$/plugins/nginx_connections">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="79" column="31" selection-start-line="79" selection-start-column="31" selection-end-line="79" selection-end-column="31" />
-          <folding>
-            <element signature="e#114#123#0" expanded="true" />
-          </folding>
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/plugins/mysql_connections">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
-          <folding>
-            <marker date="1457411974000" expanded="true" signature="960:1456" placeholder="..." />
-          </folding>
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/plugins/mysql_dbrows_">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
           <folding>
-            <marker date="1457410918000" expanded="true" signature="136:815" placeholder="..." />
-            <marker date="1457410918000" expanded="true" signature="518:815" placeholder="..." />
-            <marker date="1457410918000" expanded="true" signature="565:642" placeholder="SELECT sum(t... TABLES" />
+            <marker date="1457421379000" expanded="true" signature="562:639" placeholder="SELECT sum(t... TABLES" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/munin/nginx.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugins/mysql_replication">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
+          <folding>
+            <element signature="e#111#120#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugins/mysql_dbsize_">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
+          <folding>
+            <marker date="1457421408000" expanded="true" signature="747:844" placeholder="SELECT sum(d... TABLES" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/munin/mysql.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.37982833">
-          <caret line="24" column="20" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
+        <state vertical-scroll-proportion="0.03218884">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding>
-            <element signature="e#1#19#0" expanded="true" />
+            <element signature="e#23#41#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugins/nginx_requests">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>

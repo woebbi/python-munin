@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 """
-Mobience's importer delay plugin for Munin.
+Mobience's importer delay (minute) plugin for Munin.
 """
 
 import os
@@ -11,26 +11,26 @@ import re
 
 
 class MobienceDelayPlugin(MuninPlugin):
-    title = "Mobience Importer"
+    title = "Mobience Importer\'s delay"
     args = "--base 1000 -l 0"
-    vlabel = "delay"
+    vlabel = "delay (minutes)"
     scale = False
     category = "mobience"
 
     @property
     def fields(self):
-        warning = os.environ.get('delay_warn', 10)
-        critical = os.environ.get('delay_crit', 120)
+        warning = os.environ.get('delay_warn', 720)  # 720 minutes
+        critical = os.environ.get('delay_crit', 1440)  # 1440 minutes
         return [("delay", dict(
                 label="delay",
-                info='The delay of the mobience\'s delay describes how many processes are in the run-queue (scheduled to run "immediately").',
+                info='Mobience importer\'s delay (calculate the minutes)',
                 type="GAUGE",
                 min="0",
                 warning=str(warning),
                 critical=str(critical)))]
 
     def execute(self):
-        path = os.environ.get('LOG_URI', "/home/vagrant/log/mobience_log")
+        path = os.environ.get('LOG_URI', "/tmp/importer_mobience.log")
         if os.path.exists(path):
             with open(path, 'r') as f:
                 lines = []
@@ -38,12 +38,16 @@ class MobienceDelayPlugin(MuninPlugin):
                     if "At:" in line and " LD:" in line:
                         lines.append(line)
                 size = len(lines)
-                line = lines[size-1]
-                s = re.search("At: ", line)
-                temp = line[s.end():]
-                e = re.search(" LD:", temp)
-                time_str = temp[:e.start()]
-                t_log = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S+00:00")
+                if size > 0:
+                    line = lines[size-1]
+                    s = re.search("At: ", line)
+                    temp = line[s.end():]
+                    e = re.search(" LD:", temp)
+                    time_str = temp[:e.start()]
+                    t_log = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S+00:00")
+                else:
+                    print("Not found 'At:' tag in {}".format(path))
+                    return dict(delay=0)
         else:
             print("Not found log")
             return dict(delay=0)
