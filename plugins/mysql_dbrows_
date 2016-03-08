@@ -25,9 +25,11 @@ class MuninMySQLDBRowsPlugin(MuninMySQLPlugin):
 
         c.execute("SELECT sum(table_rows) FROM information_schema.TABLES WHERE table_schema = %s", (self.dbname,))
         row = c.fetchone()
-        return dict(
-            rows = row[0],
-        )
+        if row is not None:
+            return dict(
+                rows=row['sum(table_rows)']
+            )
+        return 0
 
 if __name__ == "__main__":
     MuninMySQLDBRowsPlugin().run()

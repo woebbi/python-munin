@@ -11,16 +11,16 @@ class MuninMySQLDBSizePlugin(MuninMySQLPlugin):
     info = "Size of database"
     fields = (
         ('datasize', dict(
-            label = "Data size (bytes)",
-            info = "Data size",
-            type = "GAUGE",
-            draw = "AREA",
+            label="Data size (bytes)",
+            info="Data size",
+            type="GAUGE",
+            draw="AREA",
         )),
         ('indexsize', dict(
-            label = "Index size (bytes)",
-            info = "Index size",
-            type = "GAUGE",
-            draw = "AREA",
+            label="Index size (bytes)",
+            info="Index size",
+            type="GAUGE",
+            draw="AREA",
         )),
     )
 
@@ -34,8 +34,8 @@ class MuninMySQLDBSizePlugin(MuninMySQLPlugin):
         c.execute("SELECT sum(data_length), sum(index_length) FROM information_schema.TABLES WHERE table_schema = %s", (self.dbname,))
         row = c.fetchone()
         return dict(
-            datasize = row[0],
-            indexsize = row[1],
+            datasize=row["sum(data_length)"],
+            indexsize=row["sum(index_length)"],
         )
 
 if __name__ == "__main__":

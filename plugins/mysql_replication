@@ -5,8 +5,7 @@
 
 import os
 import re
-
-import MySQLdb
+import pymysql.cursors
 
 from munin import MuninPlugin
 
@@ -23,24 +22,26 @@ class MuninMySQLPlugin(MuninPlugin):
     # Open a connection
     def get_connection(self, source):
         vars = self.getvars(source)
-
-        db = None
         if source == 'master':
             if not self._db_master:
-                self._db_master = MySQLdb.connect(**vars)
+                self._db_master = pymysql.connect(**vars)
             db = self._db_master
         else:
             if not self._db_slave:
-                self._db_slave = MySQLdb.connect(**vars)
+                self._db_slave = pymysql.connect(**vars)
             db = self._db_slave
-
         return db
 
     # Get variables plugins
     def getvars(self, source):
-        self.con_master = dict(
-            user="root",
-            host="localhost",
+
+        con_master = dict(
+            m_user="root",
+            m_host="localhost",
+            m_passwd="sa",
+            s_user="root",
+            s_host="localhost",
+            s_passwd="sa",
         )
 
         # Search environement vars
@@ -54,15 +55,16 @@ class MuninMySQLPlugin(MuninPlugin):
         conninfo = {}
         for k in varname:
             v = os.environ.get(k)
+            if v is None:
+                v = con_master.get(k)
             if v:
                 conninfo[k.replace(replacestr, '', 1)] = v
-
         return conninfo
 
     # get max bin log size
     def getmaxbinlogsize(self):
         db = self.get_connection('master')
-        c = db.cursor(MySQLdb.cursors.DictCursor)
+        c = db.cursor(pymysql.cursors.DictCursor)
         c.execute("show variables like 'max_binlog_size'")
         raw = c.fetchone()
         return int(raw['Value'])
@@ -70,11 +72,12 @@ class MuninMySQLPlugin(MuninPlugin):
     # Get replication values
     def getvalues(self, source):
         # get values
+        print(source)
         db = self.get_connection(source)
-        c = db.cursor(MySQLdb.cursors.DictCursor)
+        c = db.cursor(pymysql.cursors.DictCursor)
         c.execute("show %(source)s status" % locals())
-
         raw = c.fetchone()
+        print("{}".format(raw))
         return raw
 
     def autoconf(self):
@@ -124,7 +127,7 @@ class MuninMySQLReplicationPlugin(MuninMySQLPlugin):
         mfilepos = -1
         sfilepos = -1
         maxlogsize = self.getmaxbinlogsize()
-
+        print("{}".format(m))
         # Search number binary file
         r = re.search(r'\d+$', m['File'])
         if r:
