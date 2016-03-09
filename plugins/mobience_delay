@@ -16,8 +16,8 @@ class MobienceDelayPlugin(MuninPlugin):
     vlabel = "delay (minutes)"
     scale = False
     category = "Mobience"
-    warning = os.environ.get('mobience_warn', 720)  # 720 minutes
-    critical = os.environ.get('mobience_crit', 1440)  # 1440 minutes
+    warning = os.environ.get('mobience_warn', 30)  # 30 minutes
+    critical = os.environ.get('mobience_crit', 120)  # 120 minutes
     fields = (
         ('mobigate', dict(
             label="Mobience",
@@ -70,7 +70,7 @@ class MobienceDelayPlugin(MuninPlugin):
             print("Not found log: {}".format(path))
             return 0
         start = t_log
-        now = datetime.now()
+        now = datetime.utcnow()
         offset = now - start
         delay = int(offset.total_seconds()/60)  # minute
         return delay
