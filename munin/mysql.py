@@ -12,9 +12,9 @@ class MuninMySQLPlugin(MuninPlugin):
 
     def __init__(self):
         super(MuninMySQLPlugin, self).__init__()
-        self.default_table = "mobigate"
+        self.default_name = "mobigate"
         self.dbname = ((sys.argv[0].rsplit('_', 1)[-1] if self.dbname_in_args else None)
-            or os.environ.get('DATABASE') or self.default_table)
+            or os.environ.get('DATABASE') or self.default_name)
 
         self.conninfo = dict(
             user="root",

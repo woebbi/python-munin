@@ -15,22 +15,40 @@ class MobienceDelayPlugin(MuninPlugin):
     args = "--base 1000 -l 0"
     vlabel = "delay (minutes)"
     scale = False
-    category = "mobience"
-
-    @property
-    def fields(self):
-        warning = os.environ.get('delay_warn', 720)  # 720 minutes
-        critical = os.environ.get('delay_crit', 1440)  # 1440 minutes
-        return [("delay", dict(
-                label="delay",
-                info='Mobience importer\'s delay (calculate the minutes)',
-                type="GAUGE",
-                min="0",
-                warning=str(warning),
-                critical=str(critical)))]
+    category = "Mobience"
+    warning = os.environ.get('mobience_warn', 720)  # 720 minutes
+    critical = os.environ.get('mobience_crit', 1440)  # 1440 minutes
+    fields = (
+        ('mobigate', dict(
+            label="Mobience",
+            type="GAUGE",
+            draw="LINE2",
+            min="0",
+            info="Mobience Importer's delay in importer_mobience.log (minutes)",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+        ('other', dict(
+            label="Other",
+            type="GAUGE",
+            draw="LINE2",
+            info="Mobience Importer's delay in importer_other.log (minutes)",
+            min="0",
+            warning=str(warning),
+            critical=str(critical)
+        ))
+    )
 
     def execute(self):
-        path = os.environ.get('LOG_URI', "/tmp/importer_mobience.log")
+        mobience_log_path = "/data/mobience2/importer_mobience.log"
+        other_log_path = "/data/mobience2/importer_other.log"
+
+        mobience_delay = self.read_file(mobience_log_path)
+        other_delay = self.read_file(other_log_path)
+
+        return dict(mobience=mobience_delay, other=other_delay)
+
+    def read_file(self, path):
         if os.path.exists(path):
             with open(path, 'r') as f:
                 lines = []
@@ -47,15 +65,15 @@ class MobienceDelayPlugin(MuninPlugin):
                     t_log = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S+00:00")
                 else:
                     print("Not found 'At:' tag in {}".format(path))
-                    return dict(delay=0)
+                    return 0
         else:
-            print("Not found log")
-            return dict(delay=0)
+            print("Not found log: {}".format(path))
+            return 0
         start = t_log
         now = datetime.now()
         offset = now - start
         delay = int(offset.total_seconds()/60)  # minute
-        return dict(delay=delay)
+        return delay
 
 if __name__ == "__main__":
     MobienceDelayPlugin().run()

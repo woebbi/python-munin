@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+"""
+Mobience's importer delay (minute) plugin for Munin.
+"""
+
+import os
+import sys
+import time
+from munin import MuninPlugin
+import httplib2
+
+
+class HttpResponseTime(MuninPlugin):
+    title = "Http Response Times"
+    args = "--base 1000 -l 0"
+    vlabel = "Time (in milliseconds)"
+    scale = False
+    category = "Nginx"
+    warning = os.environ.get('http_warn', "0:1500")  # 720 minutes
+    critical = os.environ.get('hhtp_crit', "0:2000")  # 1440 minutes
+    fields = (
+        ('url', dict(
+            label="url",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Time (in milliseconds) for response",
+            warning=str(warning),
+            critical=str(critical)
+        ))
+    )
+
+    def execute(self):
+        duration = self.get_request_time("https://www.google.com")
+        return dict(url=duration)
+
+    def get_request_time(self, url):
+        fetcher = httplib2.Http()
+        initial = time.time()
+        resp, content = fetcher.request(url)
+        duration = int((time.time()-initial)*1000)
+        resp_code = int(resp["status"])
+        if 200 <= resp_code < 400:
+            return duration
+        return -1
+
+if __name__ == "__main__":
+    HttpResponseTime().run()
