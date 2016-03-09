@@ -8,7 +8,6 @@ import os
 import sys
 import time
 from munin import MuninPlugin
-import httplib2
 
 
 class HttpResponseTime(MuninPlugin):
@@ -17,11 +16,31 @@ class HttpResponseTime(MuninPlugin):
     vlabel = "Time (in milliseconds)"
     scale = False
     category = "Nginx"
-    warning = os.environ.get('http_warn', "0:1500")  # 720 minutes
-    critical = os.environ.get('hhtp_crit', "0:2000")  # 1440 minutes
+    warning = os.environ.get('http_warn', "0:1500")  # 1.5s
+    critical = os.environ.get('hhtp_crit', "0:2000")  # 2s
     fields = (
-        ('url', dict(
-            label="url",
+         ('create', dict(
+            label="/createUser",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Time (in milliseconds) for response",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+         ('config', dict(
+            label="/config",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Time (in milliseconds) for response",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+        ('log', dict(
+            label="/log",
             type="GAUGE",
             draw="LINE2",
             min="-1",
@@ -30,21 +49,62 @@ class HttpResponseTime(MuninPlugin):
             warning=str(warning),
             critical=str(critical)
         ))
+       
     )
 
     def execute(self):
-        duration = self.get_request_time("https://www.google.com")
-        return dict(url=duration)
+        # path  = "/var/log/nginx/testapp.mobience.pl.access.log"
+        log_path ="/home/vagrant/working//add.log"
+        result = self.read_file(log_path=log_path)
+        return dict(
+            create=result["create"],
+            config=result["config"],
+            log=result["log"]
+            )
 
-    def get_request_time(self, url):
-        fetcher = httplib2.Http()
-        initial = time.time()
-        resp, content = fetcher.request(url)
-        duration = int((time.time()-initial)*1000)
-        resp_code = int(resp["status"])
-        if 200 <= resp_code < 400:
-            return duration
-        return -1
+    def read_file(self, log_path):
+        if os.path.exists(log_path):
+            with open(log_path, 'r') as f:
+                log_lines = []
+                create_lines = []
+                config_lines = []
+                for line in f:
+                    if "/createuser/" in line:
+                        create_lines.append(line)
+                    if "/config/" in line:
+                        config_lines.append(line)
+                    if "/log/" in line:
+                        log_lines.append(line)
+                result = {}
+                create_size = len(create_lines)
+                if create_size > 0:
+                    cr_line = create_lines[create_size-1]
+                    cr_s = get_duration_from_line(cr_line)
+                    result["create"] = cr_s
+                conf_size = len(config_lines)
+                if conf_size > 0:
+                    co_line = config_lines[conf_size-1]
+                    co_s = get_duration_from_line(co_line)
+                    result["config"] = co_s
+                log_size = len(log_lines)
+                if log_size > 0:
+                    l_line = log_lines[log_size-1]
+                    l_s = get_duration_from_line(l_line)
+                    result["log"] = l_s
+        else:
+            return {}
+        return result
+
+def get_duration_from_line(line):
+    strs = line.split("-")
+    end_strs = strs[len(strs)-1]
+    size = len(end_strs)
+    if size >0 :
+        duration = int(float(end_strs[1:(size-2)])*1000)  # milliseconds
+    else:
+        duration = 0
+    return duration
+
 
 if __name__ == "__main__":
     HttpResponseTime().run()
