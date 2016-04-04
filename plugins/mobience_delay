@@ -8,6 +8,14 @@ import os
 from datetime import datetime
 from munin import MuninPlugin
 import re
+from plugins.infrastructure.mail_helper import send_notify_email
+
+try:
+    import json
+except ImportError:  # pragma: no cover
+    import simplejson as json
+
+from plugins.infrastructure.json_backend import JsonBackend
 
 
 class MobienceDelayPlugin(MuninPlugin):
@@ -45,6 +53,12 @@ class MobienceDelayPlugin(MuninPlugin):
 
         mobience_delay = self.read_file(mobience_log_path)
         other_delay = self.read_file(other_log_path)
+        print("mobience_delay: {}".format(mobience_delay))
+        print("other_delay: {}".format(other_delay))
+
+        #TODO: send mail delay
+        self.send_mail_delay("mobience_delay", mobience_delay)
+        self.send_mail_delay("other_delay", other_delay)
 
         return dict(mobience=mobience_delay, other=other_delay)
 
@@ -74,6 +88,58 @@ class MobienceDelayPlugin(MuninPlugin):
         offset = now - start
         delay = int(offset.total_seconds()/60)  # minute
         return delay
+
+    def send_mail_delay(self, function_name, time_delay):
+        my_dict = JsonBackend(fname='errors', initialize=False)
+        if time_delay > 500:
+            title = "Importer delay passed [Critical] level"
+            counted = 2*3600 #2 hours
+        else:
+            title = "Importer delay passed [Warning] level"
+            counted = 3*3600 #2 hours
+        if function_name == 'mobience_delay':
+            body = "[Mobiend]"
+        else:
+            body = "[Other]"
+
+        if os.stat("errors.json").st_size == 0:
+            data = dict()
+            data[function_name] = {"time": str(datetime.now()), "time_delay": time_delay}
+            my_dict.errors = data
+            my_dict.save_errors()
+            # Send mail
+            msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min.. \n\n"
+            send_notify_email(title, msg)
+        else:
+            with open('errors.json', 'r') as f:
+                for line in f:
+                    data = json.loads(line)
+                    if line is not None:
+                        if function_name not in data:
+                            data[function_name] = {"time": str(datetime.now()), "time_delay": time_delay}
+                            my_dict.errors = data
+                            my_dict.save_errors()
+                            msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min. \n\n"
+                            send_notify_email(title, msg)
+                        else:
+                            for key in data:
+                                if key == function_name:
+                                    last_time = data[function_name]["time"]
+                                    seconds = (datetime.now() - datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S.%f")).total_seconds()
+                                    if seconds > counted:
+                                        my_dict.errors[function_name] = {'time': str(datetime.now()), 'time_delay': time_delay}
+                                        # Send mail
+                                        msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min. \n\n"
+                                        send_notify_email(title, msg)
+                                else:
+                                    my_dict.errors[key] = data[key]
+                            my_dict.save_errors()
+                    else:
+                        my_dict.errors[function_name] = {"time": datetime.now(), "time_delay": time_delay}
+                        my_dict.save_errors()
+                        # Send mail
+                        msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min.. \n\n"
+                        send_notify_email(title, msg)
 
 if __name__ == "__main__":
     MobienceDelayPlugin().run()
