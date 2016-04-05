@@ -43,8 +43,7 @@ def send_email(sender, recipient, subject, content, ishtml = False, attachment=N
 # send email to notify failures
 def send_notify_email(subject, content):
     # recipients = ["mobience@spicymobile.pl", "it@spicymobile.pl", "kszczuka@sigma-solutions.eu", "tuyenlq@sigma-solutions.eu", "cuongnv@sigma-solutions.eu", "cuongbn@sigma-solutions.eu"]
-    recipients = ["thuongln@sigma-solutions.eu"]
-    # recipients = ["tuyenlq@sigma-solutions.eu", "tung@sigma-solutions.eu", "cuongbn@sigma-solutions.eu", "it@spicymobile.pl"]
+    recipients = ["thuongln@sigma-solutions.eu", "tuyenlq@sigma-solutions.eu", "tung@sigma-solutions.eu", "cuongbn@sigma-solutions.eu", "it@spicymobile.pl"]
     try:
         for r in recipients:
             send_email("importer@sigma-solutions.eu", r, subject, content)

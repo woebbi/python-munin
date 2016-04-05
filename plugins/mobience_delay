@@ -91,16 +91,17 @@ class MobienceDelayPlugin(MuninPlugin):
 
     def send_mail_delay(self, function_name, time_delay):
         my_dict = JsonBackend(fname='errors', initialize=False)
-        if time_delay > 500:
-            title = "Importer delay passed [Critical] level"
-            counted = 2*3600 #2 hours
-        else:
-            title = "Importer delay passed [Warning] level"
-            counted = 3*3600 #2 hours
         if function_name == 'mobience_delay':
             body = "[Mobiend]"
         else:
             body = "[Other]"
+
+        if time_delay > 500:
+            title = "Importer " + str(body) + " delay passed [Critical] level"
+            counted = 2*3600 #2 hours
+        else:
+            title = "Importer " + str(body) + " delay passed [Warning] level"
+            counted = 3*3600 #2 hours
 
         if os.stat("errors.json").st_size == 0:
             data = dict()
