@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 from munin.mysql import MuninMySQLPlugin
+
 
 class MuninMySQLConnectionsPlugin(MuninMySQLPlugin):
     dbname_in_args = True
@@ -11,24 +12,24 @@ class MuninMySQLConnectionsPlugin(MuninMySQLPlugin):
     info = "Connections"
     fields = (
         ('connections', dict(
-            label = "Connections",
-            info = "Connections",
-            type = "DERIVE",
+            label="Connections",
+            info="Connections",
+            type="DERIVE",
         )),
         ('aborted_connects', dict(
-            label = "Aborted connects",
-            info = "A high aborted connects can show someone trying to guess a password",
-            type = "DERIVE",
+            label="Aborted connects",
+            info="A high aborted connects can show someone trying to guess a password",
+            type="DERIVE",
         )),
         ('max_used_connections', dict(
-            label = "Max used connections",
-            info = "Max used connections",
-            type = "GAUGE",
+            label="Max used connections",
+            info="Max used connections",
+            type="GAUGE",
         )),
         ('max_connections', dict(
-            label = "Max connections",
-            info = "Max connections",
-            type = "GAUGE",
+            label="Max connections",
+            info="Max connections",
+            type="GAUGE",
         )),
     )
 
@@ -38,16 +39,15 @@ class MuninMySQLConnectionsPlugin(MuninMySQLPlugin):
         status = c.fetchall()
         c.execute("SHOW GLOBAL VARIABLES")
         global_vars = c.fetchall()
-
         field_names = set(x[0] for x in self.fields)
-
         values = dict()
 
-        for name, value in status + global_vars:
+        for item in status + global_vars:
+            name = item["Variable_name"]
+            value = item["Value"]
             name = name.lower()
             if name in field_names:
                 values[name] = value
-
         return values
 
 if __name__ == "__main__":

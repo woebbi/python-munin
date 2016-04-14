@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 
 import os, sys, re
 from configparser import SafeConfigParser
 from munin import MuninPlugin
+import pymysql.cursors
 
 
 class MuninMySQLPlugin(MuninPlugin):
@@ -10,13 +12,15 @@ class MuninMySQLPlugin(MuninPlugin):
 
     def __init__(self):
         super(MuninMySQLPlugin, self).__init__()
-
+        self.default_name = "mobigate"
         self.dbname = ((sys.argv[0].rsplit('_', 1)[-1] if self.dbname_in_args else None)
-            or os.environ.get('DATABASE') or self.default_table)
+            or os.environ.get('DATABASE') or self.default_name)
 
         self.conninfo = dict(
-            user = "root",
-            host = "localhost",
+            user="root",
+            host="localhost",
+            password="sa",
+            cursorclass=pymysql.cursors.DictCursor
         )
 
         cnfpath = ""
@@ -48,9 +52,8 @@ class MuninMySQLPlugin(MuninPlugin):
 
     def connection(self):
         if not hasattr(self, '_connection'):
-            import MySQLdb
-            self._connection = MySQLdb.connect(**self.conninfo)
-        return self._connection
+            connection = pymysql.connect(**self.conninfo)
+        return connection
 
     def cursor(self):
         return self.connection().cursor()

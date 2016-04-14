@@ -1,36 +1,68 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 """
-Mobience's importer delay plugin for Munin.
+Mobience's importer delay (minute) plugin for Munin.
 """
 
 import os
 from datetime import datetime
 from munin import MuninPlugin
 import re
+from plugins.infrastructure.mail_helper import send_notify_email
+
+try:
+    import json
+except ImportError:  # pragma: no cover
+    import simplejson as json
+
+from plugins.infrastructure.json_backend import JsonBackend
 
 
 class MobienceDelayPlugin(MuninPlugin):
-    title = "Mobience Importer"
+    title = "Mobience Importer\'s delay"
     args = "--base 1000 -l 0"
-    vlabel = "delay"
+    vlabel = "delay (minutes)"
     scale = False
-    category = "mobience"
-
-    @property
-    def fields(self):
-        warning = os.environ.get('delay_warn', 10)
-        critical = os.environ.get('delay_crit', 120)
-        return [("delay", dict(
-                label="delay",
-                info='The delay of the mobience\'s delay describes how many processes are in the run-queue (scheduled to run "immediately").',
-                type="GAUGE",
-                min="0",
-                warning=str(warning),
-                critical=str(critical)))]
+    category = "Mobience"
+    warning = os.environ.get('mobience_warn', 30)  # 30 minutes
+    critical = os.environ.get('mobience_crit', 120)  # 120 minutes
+    fields = (
+        ('mobigate', dict(
+            label="Mobience",
+            type="GAUGE",
+            draw="LINE2",
+            min="0",
+            info="Mobience Importer's delay in importer_mobience.log (minutes)",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+        ('other', dict(
+            label="Other",
+            type="GAUGE",
+            draw="LINE2",
+            info="Mobience Importer's delay in importer_other.log (minutes)",
+            min="0",
+            warning=str(warning),
+            critical=str(critical)
+        ))
+    )
 
     def execute(self):
-        path = os.environ.get('LOG_URI', "/home/vagrant/log/mobience_log")
+        mobience_log_path = "/data/mobience2/importer_mobience.log"
+        other_log_path = "/data/mobience2/importer_other.log"
+
+        mobience_delay = self.read_file(mobience_log_path)
+        other_delay = self.read_file(other_log_path)
+        print("mobience_delay: {}".format(mobience_delay))
+        print("other_delay: {}".format(other_delay))
+
+        #TODO: send mail delay
+        self.send_mail_delay("mobience_delay", mobience_delay)
+        self.send_mail_delay("other_delay", other_delay)
+
+        return dict(mobience=mobience_delay, other=other_delay)
+
+    def read_file(self, path):
         if os.path.exists(path):
             with open(path, 'r') as f:
                 lines = []
@@ -38,20 +70,80 @@ class MobienceDelayPlugin(MuninPlugin):
                     if "At:" in line and " LD:" in line:
                         lines.append(line)
                 size = len(lines)
-                line = lines[size-1]
-                s = re.search("At: ", line)
-                temp = line[s.end():]
-                e = re.search(" LD:", temp)
-                time_str = temp[:e.start()]
-                t_log = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S+00:00")
+                if size > 0:
+                    line = lines[size-1]
+                    s = re.search("At: ", line)
+                    temp = line[s.end():]
+                    e = re.search(" LD:", temp)
+                    time_str = temp[:e.start()]
+                    t_log = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S+00:00")
+                else:
+                    print("Not found 'At:' tag in {}".format(path))
+                    return 0
         else:
-            print("Not found log")
-            return dict(delay=0)
+            print("Not found log: {}".format(path))
+            return 0
         start = t_log
-        now = datetime.now()
+        now = datetime.utcnow()
         offset = now - start
         delay = int(offset.total_seconds()/60)  # minute
-        return dict(delay=delay)
+        return delay
+
+    def send_mail_delay(self, function_name, time_delay):
+        my_dict = JsonBackend(fname='errors', initialize=False)
+        if function_name == 'mobience_delay':
+            body = "[Mobiend]"
+        else:
+            body = "[Other]"
+
+        if time_delay > 500:
+            title = "Importer " + str(body) + " delay passed [Critical] level"
+            counted = 2*3600 #2 hours
+        else:
+            title = "Importer " + str(body) + " delay passed [Warning] level"
+            counted = 3*3600 #2 hours
+
+        if os.stat("errors.json").st_size == 0:
+            data = dict()
+            data[function_name] = {"time": str(datetime.now()), "time_delay": time_delay}
+            my_dict.errors = data
+            my_dict.save_errors()
+            # Send mail
+            msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min.. \n\n"
+            send_notify_email(title, msg)
+        else:
+            with open('errors.json', 'r') as f:
+                for line in f:
+                    data = json.loads(line)
+                    if line is not None:
+                        if function_name not in data:
+                            if time_delay > 30:
+                                data[function_name] = {"time": str(datetime.now()), "time_delay": time_delay}
+                                my_dict.errors = data
+                                my_dict.save_errors()
+                                msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min. \n\n"
+                                send_notify_email(title, msg)
+                        else:
+                            for key in data:
+                                if key == function_name:
+                                    last_time = data[function_name]["time"]
+                                    seconds = (datetime.now() - datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S.%f")).total_seconds()
+                                    if time_delay > 30:
+                                        if seconds > counted:
+                                            my_dict.errors[function_name] = {'time': str(datetime.now()), 'time_delay': time_delay}
+                                            # Send mail
+                                            msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min. \n\n"
+                                            send_notify_email(title, msg)
+                                else:
+                                    my_dict.errors[key] = data[key]
+                            my_dict.save_errors()
+                    else:
+                        if time_delay > 30:
+                            my_dict.errors[function_name] = {"time": datetime.now(), "time_delay": time_delay}
+                            my_dict.save_errors()
+                            # Send mail
+                            msg = "ALERT Importer " + str(body) + " is delayed by: " + str(time_delay) + "min.. \n\n"
+                            send_notify_email(title, msg)
 
 if __name__ == "__main__":
     MobienceDelayPlugin().run()
