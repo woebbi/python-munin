@@ -2,10 +2,10 @@
 
 ## GENERATED FILE - DO NOT EDIT
 
-import urllib2
 import sys
 import os  
 import pymongo
+
 
 def getServerStatus():
     if 'MONGO_DB_URI' in os.environ:
@@ -15,34 +15,32 @@ def getServerStatus():
 
     return c.admin.command('serverStatus', workingSet=True)
 
+
 def get():
     return getServerStatus()["indexCounters"]
 
+
 def doData():
-    for k,v in get().iteritems():
-        print( str(k) + ".value " + str(int(v)) )
+    for k, v in get().iteritems():
+        print(str(k) + ".value " + str(int(v)))
+
 
 def doConfig():
 
-    print "graph_title MongoDB btree stats"
-    print "graph_args --base 1000 -l 0"
-    print "graph_vlabel mb ${graph_period}"
-    print "graph_category MongoDB"
+    print("graph_title MongoDB btree stats")
+    print("graph_args --base 1000 -l 0")
+    print("graph_vlabel mb ${graph_period}")
+    print("graph_category MongoDB")
 
     for k in get():
-        print k + ".label " + k
-        print k + ".min 0"
-        print k + ".type COUNTER"
-        print k + ".max 500000"
-        print k + ".draw LINE1"
-
-
-
-
+        print(k + ".label " + k)
+        print(k + ".min 0")
+        print(k + ".type COUNTER")
+        print(k + ".max 500000")
+        print(k + ".draw LINE1")
 
 
 if __name__ == "__main__":          
-	
     from os import environ
     if 'HOST' in environ:
         host = environ['HOST']
