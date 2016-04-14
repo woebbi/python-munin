@@ -1,0 +1,110 @@
+#!/usr/bin/python3
+
+"""
+Mobience's importer delay (minute) plugin for Munin.
+"""
+
+import os
+import sys
+import time
+from munin import MuninPlugin
+
+
+class HttpResponseTime(MuninPlugin):
+    title = "Http Response Times"
+    args = "--base 1000 -l 0"
+    vlabel = "Time (in milliseconds)"
+    scale = False
+    category = "Nginx"
+    warning = os.environ.get('http_warn', "0:1500")  # 1.5s
+    critical = os.environ.get('hhtp_crit', "0:2000")  # 2s
+    fields = (
+         ('create', dict(
+            label="/createUser",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Time (in milliseconds) for response",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+         ('config', dict(
+            label="/config",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Time (in milliseconds) for response",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+        ('log', dict(
+            label="/log",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Time (in milliseconds) for response",
+            warning=str(warning),
+            critical=str(critical)
+        ))
+       
+    )
+
+    def execute(self):
+        log_path  = "/var/log/nginx/testapp.mobience.pl.access.log"
+        result = self.read_file(log_path=log_path)
+        return dict(
+            create=result["create"],
+            config=result["config"],
+            log=result["log"]
+            )
+
+    def read_file(self, log_path):
+        result = {"create":None, "config": None, "log":None}
+        if os.path.exists(log_path):
+            with open(log_path, 'r') as f:
+                log_lines = []
+                create_lines = []
+                config_lines = []
+                for line in f:
+                    if "/createuser/" in line:
+                        create_lines.append(line)
+                    if "/config/" in line:
+                        config_lines.append(line)
+                    if "/log/" in line:
+                        log_lines.append(line)
+                # calculate duration
+                create_size = len(create_lines)
+                if create_size > 0:
+                    cr_line = create_lines[create_size-1]
+                    cr_s = get_duration_from_line(cr_line)
+                    result["create"] = cr_s
+                conf_size = len(config_lines)
+                if conf_size > 0:
+                    co_line = config_lines[conf_size-1]
+                    co_s = get_duration_from_line(co_line)
+                    result["config"] = co_s
+                log_size = len(log_lines)
+                if log_size > 0:
+                    l_line = log_lines[log_size-1]
+                    l_s = get_duration_from_line(l_line)
+                    result["log"] = l_s
+        else:
+            return {}
+        return result
+
+def get_duration_from_line(line):
+    strs = line.split("-")
+    end_strs = strs[len(strs)-1]
+    size = len(end_strs)
+    if size >0 :
+        duration = int(float(end_strs[1:(size-2)])*1000)  # milliseconds
+    else:
+        duration = 0
+    return duration
+
+
+if __name__ == "__main__":
+    HttpResponseTime().run()

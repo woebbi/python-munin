@@ -1,0 +1,112 @@
+#!/usr/bin/python3
+
+"""
+Mobience's importer delay (minute) plugin for Munin.
+"""
+
+import os
+import sys
+import time
+from munin import MuninPlugin
+from datetime import datetime
+
+
+class HttpResponseTime(MuninPlugin):
+    title = "Mobience Error(Error Log)"
+    args = "--base 1000 -l 0"
+    vlabel = "Count (in 5 minutes)"
+    scale = False
+    category = "mobience"
+    warning = os.environ.get('http_warn', "0:1500")  # 1.5s
+    critical = os.environ.get('hhtp_crit', "0:2000")  # 2s
+    fields = (
+         ('create', dict(
+            label="/createUser",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Count (in 5 minutes) of error.",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+         ('config', dict(
+            label="/config",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Count (in 5 minutes) of error.",
+            warning=str(warning),
+            critical=str(critical)
+        )),
+        ('log', dict(
+            label="/log",
+            type="GAUGE",
+            draw="LINE2",
+            min="-1",
+            max="2000",
+            info="Count (in 5 minutes) of error.",
+            warning=str(warning),
+            critical=str(critical)
+        ))
+       
+    )
+
+    def execute(self):
+        log_path  = "/var/log/nginx/testapp.mobience.pl.error.log.1"
+        result = self.read_file(log_path=log_path)
+        return dict(
+            create=result["create"],
+            config=result["config"],
+            log=result["log"]
+            )
+
+    def read_file(self, log_path):
+        result = {"create":None, "config": None, "log":None}
+        if os.path.exists(log_path):
+            with open(log_path, 'r') as f:
+                log_lines = []
+                create_lines = []
+                config_lines = []
+                now = datetime.utcnow()
+                min_seconds = 1*24*60*60  # 1day
+                for line in f:
+                    if "/createuser/" in line:
+                        creatime = line[:19]
+                        ch_cre = check_time(now, creatime, min_seconds)
+                        if ch_cre is True:
+                            create_lines.append(line)
+                    if "/config/" in line:
+                        time_co = line[:19]
+                        ch_co = check_time(now, time_co, min_seconds)
+                        if ch_co is True:
+                            config_lines.append(line)
+                    if "/log/" in line:
+                        time_lo = line[:19]
+                        ch_lo = check_time(now, time_lo, min_seconds)
+                        if ch_lo is True:
+                            log_lines.append(line)
+                # calculate duration
+                create_size = len(create_lines)
+                result["create"] = create_size
+                conf_size = len(config_lines)
+                result["config"] = conf_size
+                log_size = len(log_lines)
+                result["log"] =  log_size
+        else:
+            return {"create":-1, "config": -1, "log":-1}
+        return result
+
+def check_time(time_now, ch_time, offset_time):
+    time_cr =datetime.strptime(ch_time, "%Y/%m/%d %H:%M:%S")
+    offset = time_now - time_cr
+    offs = int(offset.total_seconds())
+    if offs < offset_time :
+        return True
+    else:
+        return False
+
+
+if __name__ == "__main__":
+    HttpResponseTime().run()
