@@ -15,7 +15,8 @@ class MuninMemcachedPlugin(MuninPlugin):
             return False
         return True
 
-    def get_stats(self):
+    @staticmethod
+    def get_stats():
         host = os.environ.get('MEMCACHED_HOST') or '127.0.0.1'
         port = int(os.environ.get('MEMCACHED_PORT') or '11211')
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

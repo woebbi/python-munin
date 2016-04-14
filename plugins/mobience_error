@@ -5,10 +5,10 @@ Mobience's importer delay (minute) plugin for Munin.
 """
 
 import os
-import sys
-import time
 from munin import MuninPlugin
 from datetime import datetime
+
+OFFSET_TIME = 1*14*60*60  # 1 day
 
 
 class HttpResponseTime(MuninPlugin):
@@ -29,7 +29,7 @@ class HttpResponseTime(MuninPlugin):
             info="Count (in 5 minutes) of error.",
             warning=str(warning),
             critical=str(critical)
-        )),
+         )),
          ('config', dict(
             label="/config",
             type="GAUGE",
@@ -39,8 +39,8 @@ class HttpResponseTime(MuninPlugin):
             info="Count (in 5 minutes) of error.",
             warning=str(warning),
             critical=str(critical)
-        )),
-        ('log', dict(
+         )),
+         ('log', dict(
             label="/log",
             type="GAUGE",
             draw="LINE2",
@@ -49,12 +49,11 @@ class HttpResponseTime(MuninPlugin):
             info="Count (in 5 minutes) of error.",
             warning=str(warning),
             critical=str(critical)
-        ))
-       
+         ))
     )
 
     def execute(self):
-        log_path  = "/var/log/nginx/testapp.mobience.pl.error.log.1"
+        log_path = "/var/log/nginx/testapp.mobience.pl.error.log.1"
         result = self.read_file(log_path=log_path)
         return dict(
             create=result["create"],
@@ -62,7 +61,8 @@ class HttpResponseTime(MuninPlugin):
             log=result["log"]
             )
 
-    def read_file(self, log_path):
+    @staticmethod
+    def read_file(log_path):
         result = {"create":None, "config": None, "log":None}
         if os.path.exists(log_path):
             with open(log_path, 'r') as f:
@@ -70,7 +70,7 @@ class HttpResponseTime(MuninPlugin):
                 create_lines = []
                 config_lines = []
                 now = datetime.utcnow()
-                min_seconds = 1*24*60*60  # 1day
+                min_seconds = OFFSET_TIME
                 for line in f:
                     if "/createuser/" in line:
                         creatime = line[:19]
@@ -93,16 +93,17 @@ class HttpResponseTime(MuninPlugin):
                 conf_size = len(config_lines)
                 result["config"] = conf_size
                 log_size = len(log_lines)
-                result["log"] =  log_size
+                result["log"] = log_size
         else:
-            return {"create":-1, "config": -1, "log":-1}
+            return {"create": -1, "config": -1, "log": -1}
         return result
 
+
 def check_time(time_now, ch_time, offset_time):
-    time_cr =datetime.strptime(ch_time, "%Y/%m/%d %H:%M:%S")
+    time_cr = datetime.strptime(ch_time, "%Y/%m/%d %H:%M:%S")
     offset = time_now - time_cr
     offs = int(offset.total_seconds())
-    if offs < offset_time :
+    if offs < offset_time:
         return True
     else:
         return False

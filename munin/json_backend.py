@@ -17,6 +17,7 @@ try:
 except ImportError:  # pragma: no cover
     import simplejson as json
 
+
 class BackendIOException(Exception):
     """Generic Backend I/O Exception"""
     pass
@@ -31,6 +32,7 @@ try:
 except AttributeError:
     class py23dict(dict):
         iteritems = dict.items
+
 
 class BytesEncoder(json.JSONEncoder):
     def default(self, obj):

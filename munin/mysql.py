@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import os, sys, re
 from configparser import SafeConfigParser
@@ -14,7 +14,7 @@ class MuninMySQLPlugin(MuninPlugin):
         super(MuninMySQLPlugin, self).__init__()
         self.default_name = "mobigate"
         self.dbname = ((sys.argv[0].rsplit('_', 1)[-1] if self.dbname_in_args else None)
-            or os.environ.get('DATABASE') or self.default_name)
+                       or os.environ.get('DATABASE') or self.default_name)
 
         self.conninfo = dict(
             user="root",

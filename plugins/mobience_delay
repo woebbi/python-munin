@@ -5,17 +5,19 @@ Mobience's importer delay (minute) plugin for Munin.
 """
 
 import os
-from datetime import datetime
-from munin import MuninPlugin
 import re
-from plugins.infrastructure.mail_helper import send_notify_email
+from datetime import datetime
+
+from munin.mail_helper import send_notify_email
+
+from munin import MuninPlugin
 
 try:
     import json
 except ImportError:  # pragma: no cover
     import simplejson as json
 
-from plugins.infrastructure.json_backend import JsonBackend
+from munin.json_backend import JsonBackend
 
 
 class MobienceDelayPlugin(MuninPlugin):
@@ -53,16 +55,15 @@ class MobienceDelayPlugin(MuninPlugin):
 
         mobience_delay = self.read_file(mobience_log_path)
         other_delay = self.read_file(other_log_path)
-        print("mobience_delay: {}".format(mobience_delay))
-        print("other_delay: {}".format(other_delay))
 
-        #TODO: send mail delay
+        # TODO: send mail delay
         self.send_mail_delay("mobience_delay", mobience_delay)
         self.send_mail_delay("other_delay", other_delay)
 
         return dict(mobience=mobience_delay, other=other_delay)
 
-    def read_file(self, path):
+    @staticmethod
+    def read_file(path):
         if os.path.exists(path):
             with open(path, 'r') as f:
                 lines = []
@@ -89,7 +90,8 @@ class MobienceDelayPlugin(MuninPlugin):
         delay = int(offset.total_seconds()/60)  # minute
         return delay
 
-    def send_mail_delay(self, function_name, time_delay):
+    @staticmethod
+    def send_mail_delay(function_name, time_delay):
         my_dict = JsonBackend(fname='errors', initialize=False)
         if function_name == 'mobience_delay':
             body = "[Mobiend]"
@@ -98,10 +100,10 @@ class MobienceDelayPlugin(MuninPlugin):
 
         if time_delay > 500:
             title = "Importer " + str(body) + " delay passed [Critical] level"
-            counted = 2*3600 #2 hours
+            counted = 2*3600  # 2 hours
         else:
             title = "Importer " + str(body) + " delay passed [Warning] level"
-            counted = 3*3600 #2 hours
+            counted = 3*3600  # 2 hours
 
         if os.stat("errors.json").st_size == 0:
             data = dict()

@@ -5,13 +5,11 @@ Mobience's importer delay (minute) plugin for Munin.
 """
 
 import os
-import sys
-import time
 from munin import MuninPlugin
 
 
 class HttpResponseTime(MuninPlugin):
-    title = "Http Response Times"
+    title = "Response Times (Access Log)"
     args = "--base 1000 -l 0"
     vlabel = "Time (in milliseconds)"
     scale = False
@@ -53,12 +51,7 @@ class HttpResponseTime(MuninPlugin):
     )
 
     def execute(self):
-<<<<<<< HEAD
-        log_path  = "/var/log/nginx/testapp.mobience.pl.access.log"
-=======
-        # log_path  = "/var/log/nginx/testapp.mobience.pl.access.log"
-        log_path = "/home/vagrant/working//add.log"
->>>>>>> 960e7de0ef7e7bc650d7caac59aac3a551545443
+        log_path = "/var/log/nginx/testapp.mobience.pl.access.log"
         result = self.read_file(log_path=log_path)
         return dict(
             create=result["create"],
@@ -66,12 +59,9 @@ class HttpResponseTime(MuninPlugin):
             log=result["log"]
             )
 
-    def read_file(self, log_path):
-<<<<<<< HEAD
-        result = {"create":None, "config": None, "log":None}
-=======
+    @staticmethod
+    def read_file(log_path):
         result = {"create": None, "config": None, "log": None}
->>>>>>> 960e7de0ef7e7bc650d7caac59aac3a551545443
         if os.path.exists(log_path):
             with open(log_path, 'r') as f:
                 log_lines = []
@@ -84,10 +74,7 @@ class HttpResponseTime(MuninPlugin):
                         config_lines.append(line)
                     if "/log/" in line:
                         log_lines.append(line)
-<<<<<<< HEAD
                 # calculate duration
-=======
->>>>>>> 960e7de0ef7e7bc650d7caac59aac3a551545443
                 create_size = len(create_lines)
                 if create_size > 0:
                     cr_line = create_lines[create_size-1]
@@ -107,19 +94,12 @@ class HttpResponseTime(MuninPlugin):
             return {}
         return result
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 960e7de0ef7e7bc650d7caac59aac3a551545443
 def get_duration_from_line(line):
     strs = line.split("-")
     end_strs = strs[len(strs)-1]
     size = len(end_strs)
-<<<<<<< HEAD
-    if size >0 :
-=======
     if size > 0:
->>>>>>> 960e7de0ef7e7bc650d7caac59aac3a551545443
         duration = int(float(end_strs[1:(size-2)])*1000)  # milliseconds
     else:
         duration = 0
