@@ -2,48 +2,31 @@
 
 # GENERATED FILE - DO NOT EDIT
 
-import sys
-import os  
-import pymongo
+from munin.mongodb import MuninMongoPlugin
 
 
-def getServerStatus():
-    if 'MONGO_DB_URI' in os.environ:
-      c = pymongo.MongoClient(os.environ['MONGO_DB_URI'])
-    else:
-      c = pymongo.MongoClient()
+class MongoConnectPlugin(MuninMongoPlugin):
+    title = "MongoDB current connections"
+    args = "-l 0 --base 1000"
+    vlabel = "connections"
+    info = "MongoDB current connections"
+    fields = (
+        ('current', dict(
+            label="connections",
+            info="MongoDB current connections",
+            type="COUNTER",
+            min="0",
+            draw="LINE1",
+        )),
+    )
 
-    return c.admin.command('serverStatus', workingSet=True)
-
-name = "connections"
-
-
-def doData():
-    print(name + ".value " + str(getServerStatus()["connections"]["current"]))
-
-
-def doConfig():
-
-    print("graph_title MongoDB current connections")
-    print("graph_args --base 1000 -l 0")
-    print("graph_vlabel connections")
-    print("graph_category MongoDB")
-
-    print(name + ".label " + name)
-
+    def execute(self):
+        status = self.server_status
+        try:
+            value = status["connections"]["current"]
+        except KeyError:
+            value = "I"
+        return dict(current=value)
 
 if __name__ == "__main__":
-    from os import environ
-    if 'HOST' in environ:
-        host = environ['HOST']
-    if 'PORT' in environ:
-        port = environ['PORT']
-    if 'USER' in environ:
-        user = environ['USER']
-    if 'PASSWORD' in environ:
-        password = environ['PASSWORD']
-    
-if len(sys.argv) > 1 and sys.argv[1] == "config":
-    doConfig()
-else:
-    doData()
+    MongoConnectPlugin().run()

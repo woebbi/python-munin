@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+# GENERATED FILE - DO NOT EDIT
+
+from munin.mongodb import MuninMongoPlugin
+
+
+class MongoDBLockTime(MuninMongoPlugin):
+    args = "-l 0 --base 1000"
+    vlabel = "time"
+    title = "MongoDB global lock time"
+    info = "How long the global lock has been held"
+    fields = (
+        ('locktime', dict(
+            label="Global lock time",
+            info="How long the global lock has been held",
+            type="COUNTER",
+            min="0",
+        )),
+    )
+
+    def execute(self):
+        status = self.server_status
+        try:
+            value = int(status["globalLock"]["lockTime"])
+        except KeyError:
+            value = "U"
+        return dict(locktime=value)
+
+
+if __name__ == "__main__":
+    MongoDBLockTime().run()

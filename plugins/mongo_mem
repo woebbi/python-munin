@@ -2,53 +2,46 @@
 
 # GENERATED FILE - DO NOT EDIT
 
-import sys
-import os  
-import pymongo
+from munin.mongodb import MuninMongoPlugin
 
 
-def getServerStatus():
-    if 'MONGO_DB_URI' in os.environ:
-      c = pymongo.MongoClient(os.environ['MONGO_DB_URI'])
-    else:
-      c = pymongo.MongoClient()
-    return c.admin.command('serverStatus', workingSet=True)
+class MongoDBMemoryPlugin(MuninMongoPlugin):
+    args = "-l 0 --base 1024"
+    vlabel = "bytes"
+    title = "MongoDB memory usage"
+    info = "Memory usage"
+    fields = (
+        ('virtual', dict(
+            label="virtual",
+            info="Bytes of virtual memory",
+            type="GAUGE",
+            min="0",
+        )),
+        ('resident', dict(
+            label="resident",
+            info="Bytes of resident memory",
+            type="GAUGE",
+            min="0",
+        )),
+        ('mapped', dict(
+            label="mapped",
+            info="Bytes of mapped memory",
+            type="GAUGE",
+            min="0",
+        )),
+    )
 
-
-def ok(s):
-    return s == "resident" or s == "virtual" or s == "mapped"
-
-
-def doData():
-    for k, v in getServerStatus()["mem"].items():
-        if ok(k):
-            print(str(k) + ".value " + str(v * 1024 * 1024))
-
-
-def doConfig():
-
-    print("graph_title MongoDB memory usage")
-    print("graph_args --base 1024 -l 0 --vertical-label Bytes")
-    print("graph_category MongoDB")
-
-    for k in getServerStatus()["mem"]:
-        if ok(k):
-            print(k + ".label " + k)
-            print(k + ".draw LINE1")
+    def execute(self):
+        status = self.server_status
+        values = {}
+        for k in ("virtual", "resident", "mapped"):
+            try:
+                value = int(status["mem"][k]) * 1024 * 1024
+            except KeyError:
+                value = "U"
+            values[k] = value
+        return values
 
 
 if __name__ == "__main__":
-    from os import environ
-    if 'HOST' in environ:
-        host = environ['HOST']
-    if 'PORT' in environ:
-        port = environ['PORT']
-    if 'USER' in environ:
-        user = environ['USER']
-    if 'PASSWORD' in environ:
-        password = environ['PASSWORD']
-    
-if len(sys.argv) > 1 and sys.argv[1] == "config":
-    doConfig()
-else:
-    doData()
+    MongoDBMemoryPlugin().run()
