@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+# GENERATED FILE - DO NOT EDIT
+
+from munin.mongodb import MuninMongoPlugin
+
+
+class MongoDBObjectsPlugin(MuninMongoPlugin):
+    title = "MongoDB objects"
+    args = "-l 0 --base 1000"
+    vlabel = "objects"
+    info = "Number of objects stored"
+    ops = ("query", "update", "insert", "delete", "command", "getmore")
+
+    dbname_in_args = True
+    fields = (
+        ('objects', dict(
+            label="objects",
+            info="Number of objects stored",
+            type="GAUGE",
+            min="0",
+        )),
+    )
+
+    @property
+    def title(self):
+        return "MongoDB objects in database %s" % self.dbname
+
+    def execute(self):
+        stats = self.db.command("dbstats")
+        return dict(objects=stats['objects'])
+
+if __name__ == "__main__":
+    MongoDBObjectsPlugin().run()

@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+# GENERATED FILE - DO NOT EDIT
+
+from munin.mongodb import MuninMongoPlugin
+
+
+class MongoDBQueuesPlugin(MuninMongoPlugin):
+    title = "MongoDB queues"
+    args = "-l 0 --base 1000"
+    vlabel = "ops/sec"
+    info = "Queues"
+    queues = ("readers", "writers")
+
+    @property
+    def fields(self):
+        return [
+            (q, dict(
+                label="%s" % q,
+                info="%s" % q,
+                type="GAUGE",
+                min="0",
+            )) for q in self.queues
+            ]
+
+    def execute(self):
+        status = self.server_status
+        return dict(
+            (q, status["globalLock"]["currentQueue"][q])
+            for q in self.queues
+        )
+
+if __name__ == "__main__":
+    MongoDBQueuesPlugin().run()
