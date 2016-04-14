@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## GENERATED FILE - DO NOT EDIT
+# GENERATED FILE - DO NOT EDIT
 
 import sys
 import os  
@@ -19,7 +19,7 @@ name = "locked"
 
 
 def doData():
-    print(name + ".value " + str( 100 * (getServerStatus()["globalLock"]["lockTime"]/getServerStatus()["globalLock"]["totalTime"])))
+    print(name + ".value " + str(100 * (getServerStatus()["globalLock"]["lockTime"]/getServerStatus()["globalLock"]["totalTime"])))
 
 
 def doConfig():

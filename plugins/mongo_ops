@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## GENERATED FILE - DO NOT EDIT
+# GENERATED FILE - DO NOT EDIT
 
 import sys
 import os  
@@ -18,7 +18,7 @@ def getServerStatus():
 
 def doData():
     ss = getServerStatus()
-    for k,v in ss["opcounters"].iteritems():
+    for k, v in ss["opcounters"].items():
         print(str(k) + ".value " + str(v))
 
 
