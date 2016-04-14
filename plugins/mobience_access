@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 """
-Mobience's importer delay (minute) plugin for Munin.
+Mobience's response time (in miliseconds) plugin for Munin.
+read from access_log
 """
 
 import os
