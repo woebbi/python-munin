@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+
+# ==== MADMAN Team =====
+
 import sys
 from munin.postgres import MuninPostgresPlugin
 

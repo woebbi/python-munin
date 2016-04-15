@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# ==== MADMAN Team =====
+
 from munin.nginx import MuninNginxPlugin
 
 

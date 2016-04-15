@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# GENERATED FILE - DO NOT EDIT
+# ==== MADMAN Team =====
 
 from munin.mongodb import MuninMongoPlugin
 

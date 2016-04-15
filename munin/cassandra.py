@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+
+# ==== MADMAN Team =====
+
 from __future__ import division
 
 import os
